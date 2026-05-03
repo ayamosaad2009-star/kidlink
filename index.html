@@ -1,18 +1,15 @@
-<!DOCTYPE html>
-<html lang="ar">
-<head>
-    <meta charset="UTF-8">
-    <title>KidLink - Heart Rate</title>
-</head>
 <body>
+    <div style="text-align: center; padding: 20px; font-family: sans-serif;">
+        <div id="successMark" style="display: none; background: #2ecc71; color: white; padding: 10px; border-radius: 10px; margin-bottom: 20px; font-weight: bold;">
+            تمت القراءة بنجاح ✓
+        </div>
 
-    <div style="text-align: center; padding: 20px;">
-        <button onclick="startMeasuring()" style="padding: 15px; background: #2ecc71; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px;">
-            ابدأ قياس نبضي الحقيقي 💓
+        <button id="startBtn" onclick="startMeasuring()" style="padding: 15px; background: #007bff; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 18px;">
+            ابدأ قياس نبضي الآن 💓
         </button>
 
-        <div style="margin-top: 20px; font-size: 24px;">
-            النبض الآن: <span id="heartRateText" style="color: red; font-weight: bold;">0</span> BPM
+        <div style="margin-top: 30px; font-size: 28px;">
+            نبضك الحالي: <span id="heartRateText" style="color: #e74c3c; font-weight: bold;">0</span> BPM
         </div>
     </div>
 
@@ -20,6 +17,4 @@
     <canvas id="c" width="100" height="100" style="display:none;"></canvas>
 
     <script type="module" src="firebase-config.js"></script>
-
 </body>
-</html>
