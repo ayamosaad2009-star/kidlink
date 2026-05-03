@@ -14,10 +14,8 @@
             النبض الآن: <span id="heartRateText" style="color: red; font-weight: bold;">0</span> BPM
         </div>
     </div>
-
-    <video id="v" style="display:none;" playsinline></video>
-    <canvas id="c" width="100" height="100" style="display:none;"></canvas>
-
     <script type="module" src="firebase-config.js"></script>
+</body>
+</html>
 </body>
 </html>
