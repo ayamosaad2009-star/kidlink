@@ -1,0 +1,18 @@
+function startHeartRateScan() {
+    const video = document.createElement('video');
+    // فتح الكاميرا
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' } })
+    .then(stream => {
+        video.srcObject = stream;
+        video.play();
+        
+        // هنا البرنامج بيبدأ يحلل الصورة
+        setInterval(() => {
+            let reading = analyzePixels(video); // دالة بتحلل تغير اللون
+            if(reading > 0) {
+                // إرسال النبض الحقيقي لـ Firebase
+                updateFirebase(reading); 
+            }
+        }, 1000);
+    });
+}
