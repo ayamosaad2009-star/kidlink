@@ -1,0 +1,61 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+// بيانات Firebase بتاعتك
+const firebaseConfig = {
+  apiKey: "AIzaSy...",
+  databaseURL: "https://kidlink-45e11-default-rtdb.firebaseio.com",
+  projectId: "kidlink-45e11",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// دالة بدء القياس
+window.startMeasuring = function() {
+    const v = document.getElementById('v');
+    const canvas = document.getElementById('c');
+    const ctx = canvas.getContext('2d');
+
+    navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } })
+    .then(stream => {
+        v.srcObject = stream;
+        v.play();
+        processFrame();
+    });
+
+    let samples = [];
+    function processFrame() {
+        ctx.drawImage(v, 0, 0, canvas.width, canvas.height);
+        const data = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+        
+        // بنحسب متوسط اللون الأحمر في الكاميرا
+        let redSum = 0;
+        for (let i = 0; i < data.length; i += 4) {
+            redSum += data[i];
+        }
+        const avgRed = redSum / (data.length / 4);
+        
+        samples.push(avgRed);
+        if (samples.length > 100) {
+            // هنا بنعمل معادلة بسيطة لاكتشاف "القمة" في تغير اللون
+            let bpm = calculateBPM(samples); 
+            if (bpm > 50 && bpm < 150) {
+                // إرسال النبض الحقيقي لـ Firebase
+                set(ref(db, 'heartRate'), Math.round(bpm));
+            }
+            samples.shift();
+        }
+        requestAnimationFrame(processFrame);
+    }
+};
+
+function calculateBPM(samples) {
+    // معادلة برمجية لحساب النبض من تغيرات اللون الأحمر
+    // (بتبحث عن عدد المرات اللي اللون زاد فيها عن المتوسط)
+    let count = 0;
+    for (let i = 1; i < samples.length - 1; i++) {
+        if (samples[i] > samples[i-1] && samples[i] > samples[i+1]) count++;
+    }
+    return count * 15; // تقدير تقريبي للنبض
+}
