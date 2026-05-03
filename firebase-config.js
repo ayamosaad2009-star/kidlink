@@ -4,34 +4,25 @@
     <meta charset="UTF-8">
     <title>KidLink - Heart Rate</title>
 </head>
-<body>
-    let readings = []; // مصفوفة عشان نجمع فيها القراءات ونحسب المتوسط
+<body>import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-function processStream(pulseValue) {
-    // 1. التأكد إن فيه صباع مغطي الكاميرا (اللون الأحمر عالي)
-    if (pulseValue > 10) { 
-        readings.push(pulseValue);
+const firebaseConfig = {
+    apiKey: "AIzaSy...", // حط مفتاحك هنا
+    databaseURL: "https://kidlink-45e11-default-rtdb.firebaseio.com",
+    projectId: "Kidlink-45e11",
+};
 
-        // 2. لما نجمع 10 قراءات، نحسب المتوسط عشان الرقم يثبت
-        if (readings.length >= 10) {
-            let average = readings.reduce((a, b) => a + b) / readings.length;
-            let finalBPM = Math.round(average);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-            // 3. نبعت لـ Firebase فقط لو الرقم منطقي (بين 60 و 120 مثلاً)
-            if (finalBPM > 60 && finalBPM < 120) {
-                set(ref(db, 'HEARTRATE'), finalBPM);
-                
-                // إظهار علامة الصح اللي طلبتها
-                const mark = document.getElementById("successMark");
-                if(mark) mark.style.display = "block";
-            }
-            readings = []; // نصفر المصفوفة عشان القراءة اللي بعدها
-        }
-    } else {
-        // لو صباعك مش محطوط، يصفر القراءات وما يبعتش أرقام عشوائية
-        readings = [];
-    }
-}
+// حركة التحدي: أول ما الموقع يفتح، هيخلي القيمة 0 ويقف تماماً
+set(ref(db, 'HEARTRATE'), 0);
+
+onValue(ref(db, 'HEARTRATE'), (snapshot) => {
+    const value = snapshot.val();
+    document.getElementById("heartRateText").innerText = value;
+});
    
         </div>
     </div>
